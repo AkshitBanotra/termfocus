@@ -30,6 +30,7 @@ For other distros, you may need to install dependencies manually.
 Clone the repository and run the setup script:
 
 ```bash
-git clone https://github.com/yourusername/termfocus.git
+git clone 
 cd termfocus
 ./setup.sh # Setup script coming soon -- Currently manual setup required.
+
