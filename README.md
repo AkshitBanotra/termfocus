@@ -11,6 +11,20 @@
   - Search, view, edit, or remove old logs by date.  
 - **Simple Timer:** Track custom time periods easily from the terminal.
 
+## Dependencies
+
+TermFocus requires the following tools:
+
+- rofi
+- ani-cli
+- notify-send
+- paplay
+- figlet
+- lolcat
+
+The included setup script will attempt to install missing dependencies automatically, using commands appropriate for your Linux distro (tested on EndeavourOS / Arch-based systems).  
+For other distros, you may need to install dependencies manually.
+
 ## Installation
 
 Clone the repository and run the setup script:
