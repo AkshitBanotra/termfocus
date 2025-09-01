@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+
+source "${HOME}/termfocus/animations"
+
+##################################################
+
+title () {
+	figlet "POMODORO" | lolcat
+	echo ""
+	echo ""
+}
+
+###################################################
+
+timer () {
+	tput civis
+	trap "tput cnorm;exit" INT TERM EXIT
+
+	local time="${1}"
+
+	# Start exit function in background
+	exit_to_launcher &
+	local exit_pid=$!
+
+        for (( k=time; k>=1; k-- ));do
+		printf "\rTime Left: %02d mins" "$k"
+		sleep 1s
+	done
+	# Kill the background exit process
+	tput cnorm
+}
+
+##################################################
+
+exit_to_launcher () {
+	while true;do
+		read -n 1 key
+		if [[ ${key} =~ ^([eE])$ ]];then
+			sleep 0.5s
+			exit 0
+		fi
+	done
+}
+
+#################################################
+while true;do
+       clear	
+       title
+       text_animation "How many sessions?" "BRIGHT_GREEN"
+       sleep 0.4s
+       text_animation " [Enter input from 1-5]" "RED"
+       read -p "
+>> " sessions
+       echo ""
+       text_animation "Enter Work time [Default: 25 mins]" "BLUE"
+       echo ""
+       read -p "
+>> " Work
+       echo ""
+       text_animation "Enter Break time [Default: 5 mins]" "BRIGHT_YELLOW"
+       echo ""
+       read -p "
+>> " Break
+       echo ""
+       text_animation "Enter Long break time [Default: 15 mins]" "BRIGHT_MAGENTA"
+       echo ""
+       read -p "
+>> " Long_Break
+       echo ""
+       if [[ ${sessions} =~ ^([1-5])$ ]];then
+       text_animation "${sessions} sessions selected..."
+       echo ""
+       sleep 0.2s
+       clear
+       tput civis
+       trap "tput cnorm;exit" INT TERM EXIT
+       for (( j=0; j<=sessions; j++ ));do
+	       clear
+	       title
+	       text_animation "|||||||||||||||||||||||||||||||||" "BRIGHT_CYAN"
+	       echo ""
+	       echo ""
+	       sleep 0.2s
+	       text_animation "Work:-"
+	       echo ""
+	       text_animation "Focus Block | Session: ${sessions}"
+	       echo ""
+	       echo ""
+	       echo "----------------"
+	       echo ""
+	       echo ""
+	       timer ${Work:-25}
+	       notify-send "Work Timer completed"
+               paplay "${HOME}/Music/sounds/ubports/notifications/Mallet.ogg"
+	       sleep 0.2s
+	       echo ""
+	       text_animation "Focus timer finished..." "BRIGHT_GREEN"
+	       if [[ $j -ne ${sessions} ]];then
+		       sleep 0.5s
+		       clear
+		       title
+		       text_animation "==========================" "RED"
+		       echo ""
+		       echo ""
+		       sleep 0.2s
+		       text_animation "Short-Break:-" "BRIGHT_YELLOW"
+		       echo ""
+		       echo ""
+		       echo "---------------"
+		       echo ""
+		       echo ""
+		       timer ${Break:-5}
+		       notify-send "Break timer finished!"
+		       paplay "${HOME}/Music/sounds/ubports/notifications/Sintesis.ogg"
+		       sleep 0.2s
+		       echo ""
+		       text_animation "Break over. Let’s get back in sync and move forward." "BRIGHT_GREEN"
+	       else
+		       clear
+		       title
+		       sleep 0.2s
+		       text_animation "All sessions completed successfully. You did great! Now initiating long break sequence…" "BRIGHT_YELLOW"
+		       echo ""
+		       echo ""
+		       text_animation "||||||||||||||||||||||||||||||||||||" "RED"
+		       echo ""
+		       echo ""
+		       text_animation "Long Break:"
+		       echo ""
+		       echo ""
+		       echo "-----------------"
+		       echo ""
+		       echo ""
+		       timer ${Long_Break:-15}
+		       notify-send "Long Break finished!" "All sessions have been completed!"
+		       paplay "${HOME}/Music/sounds/ubports/ringtones/Counterpoint.ogg"
+		       echo ""
+		       text_animations "Long break finished!"
+		       sleep 1.5ss
+		       clear
+		       exit
+		       tput cnorm
+	       fi
+       done
+       fi
+done
+       
+       
+
+
+
+
+
+
+
+
+

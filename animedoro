@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+
+source "${HOME}/termfocus/animations"
+
+#########################################
+
+# Hide cursor and set up trap to restore it
+
+tput civis
+trap "tput cnorm; exit" INT TERM EXIT
+
+#########################################
+
+title () {
+	figlet "ANIMEDORO" | lolcat
+	echo ""
+	echo ""
+}
+
+#########################################
+
+# Just for gap
+
+gap () {
+	echo ""
+	echo ""
+}
+
+#########################################
+
+# Timer
+
+timer () {
+	tput civis
+	trap "tput cnorm;exit" INT TERM EXIT
+	local time=${1}
+		for (( i=time; i>=1; i-- ));do
+			printf "\rTime Left: %02d mins" "$i"
+			sleep 1s
+		done
+		tput cnorm
+	}
+
+#########################################
+
+ani_cli_adjuster () {
+	clear
+	text_animation "Do you want to watch in sub or dub? [ 'S' for sub | 'D' for dub ]" "BRIGHT_GREEN"
+	gap
+	read -p "
+>> " option
+	if [[ ${option} == S ]] || [[ ${option} == s ]];then
+		ani-cli -q 1080p ${anime} &
+		sleep ${Break:-24}s
+		pkill ani-cli && pkill mpv
+		sleep 3s
+	elif [[ ${option} == D ]] || [[ ${option} == d ]];then
+		ani-cli -q 1080p --dub ${anime} &
+		sleep ${Break:-24}s
+		pkill ani-cli && pkill mpv
+	else
+		gap
+		text_animation "Enter the valid input!"
+	fi
+}
+
+#########################################
+
+tput civis
+trap "tput cnorm; exit" INT TERM EXIT
+while true;do
+	clear
+	title
+	text_animation "What do you want to focus on?"
+	read -p "
+>> " focus
+	gap
+	text_animation "Enter Work Timer length [ Default: 45 mins ]: " "BRIGHT_GREEN"
+	read -p " " Work
+	gap
+	text_animation "Enter Short Break Timer length [ Default: 24 mins ]: " "BRIGHT_YELLOW"
+	read -p " " Break
+	gap
+	text_animation "Enter Long Break Timer length [ Default: 48 mins ]: " "BRIGHT_CYAN"
+	read -p " " Long_Break
+	gap
+	text_animation "Which anime do you want to watch in short break?" "RED"
+	read -p "
+>> " anime
+        gap
+	text_animation "Now, for how many sessions do you want to focus? [ Max: 5 ]"
+	read -p "
+>> " sessions
+	if [[ ${sessions} =~ ^([1-5])$ ]];then
+		gap
+		text_animation "You selected ${sessions} sessions!" "BRIGHT_MAGENTA "
+		echo ""
+		animation_2
+		sleep 1.5s
+		clear
+		if [[ ${sessions} =~ ^([1-5])$ ]];then
+			for (( k=1; k<=sessions; k++ ));do
+				clear
+				title
+				text_animation "|||||||||||||||||||||||||||" "BRIGHT_CYAN"
+				gap
+				sleep 0.5s
+				text_animation "Focus Block | ${focus} : ${k}" "BRIGHT_GREEN"
+				gap
+				timer ${Work:-25}
+				gap
+				notify-send "Timer finished!" "Break time."
+				paplay "${HOME}/termfocus/sounds/Mallet.ogg"
+				sleep 1.5s
+				clear
+				if [[ ${k} -ne ${sessions} ]];then
+					title
+					text_animation "Opening ani-cli..." "BRIGHT_CYAN"
+					sleep 1.5s
+					ani_cli_adjuster
+					notify-send "Timer Finished!" "That was your reward. Now, next arc begins."
+					paplay "${HOME}/termfocus/sounds/fantasy.mp3"
+					sleep 2s
+				else
+					sleep 2s
+					title
+					text_animation ""
+					ani_cli_adjuster
+					sleep ${Long_Break}s
+					notify-send "Timer Finished!" "Long break complete. The battlefield is quiet—until you return."
+					paplay "${HOME}/termfocus/sounds/metal_gear_victory.mp3"
+					clear
+					text_animation "The cycle is complete." "BRIGHT_YELLOW"
+					echo ""
+					text_animation "Your arc for today has reached its end." "RED"
+					echo ""
+					text_animation "You trained, you fought, you endured." "BRIGHT_CYAN"
+					echo ""
+					text_animation "And with each session, you grew stronger." "BRIGHT_YELLOW"
+					echo ""
+					text_animation "Take this moment to rest." "BRIGHT_GREEN"
+					echo ""
+					text_animation "The next chapter awaits when you return." "RED"
+					echo ""
+					echo ""
+					echo "Exiting animedoro "
+					animation_2
+					sleep 3.5s
+					tput cnorm
+					clear
+					exit
+				fi
+			done
+		fi
+	else
+		gap
+		echo "${colours[RED]}Enter the valid input! [ 1-5 ].${colors[NC]}"
+	fi
+done		     	       

@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+source "${HOME}/termfocus/animations"
+
+######################################
+
+while true;do
+	tput civis
+	trap "tput cnorm;exit" INT TERM EXIT
+	clear
+	figlet "TERMFOCUS" | lolcat
+	echo ""
+	echo ""
+	echo -e "${colours[BRIGHT_CYAN]}||||||||||||||||||||||||||||||"
+	echo ""
+	echo ""
+	text_animation "1] POMODORO" "BRIGHT_GREEN"
+	echo ""
+	text_animation "2] ANIMEDORO" "BRIGHT_YELLOW"
+	echo ""
+	text_animation "3] JOURNALING" "WHITE"
+	echo ""
+	text_animation "4] TIMER" "BLUE"
+	echo ""
+	text_animation "5] EXIT" "RED"
+	echo ""
+	read -s -n 1 option
+	if [[ ${option} == 1 ]];then
+		"${HOME}/termfocus/pomodoro"
+	elif [[ ${option} == 2 ]];then
+		"${HOME}/termfocus/animedoro"
+	elif [[ ${option} == 3 ]];then
+		"${HOME}/termfocus/journaling"
+	elif [[ ${option} == 4 ]];then
+		"${HOME}/termfocus/timer"
+	elif [[ ${option} == 5 ]];then
+		sleep 1s
+		echo ""
+		echo ""
+		text_animation "Exiting termfocus... " "RED"
+		echo ""
+		animation_2
+		sleep 0.07s
+		clear
+		sleep 1s
+		exit
+	else
+		echo ""
+		echo ""
+		text_animation "Enter valid input!" "RED"
+		echo ""
+	fi
+	tput cnorm
+done
+
+

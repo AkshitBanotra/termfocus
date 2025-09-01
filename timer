@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+##################################################
+
+source "${HOME}/termfocus/animations"
+
+##################################################
+
+while ((1));do
+	tput civis
+	trap "tput cnorm;exit" INT TERM EXIT
+	clear
+	figlet "<< TIMER >>" | lolcat
+	echo ""
+	echo ""
+	text_animation "Enter timer length: "
+	echo ""
+	read -p "
+>> " length
+	if [[ ${length} =~ ^([1-9][0-9]*)+$ ]];then
+		for (( i=length; i>=1; i-- ));do
+			printf "\rTime left: %02d mins" "$i"
+			sleep 1s
+		done
+		notify-send "Timer finished!"
+		paplay "${HOME}/Music/sounds/ubports/notifications/Mallet.ogg"
+
+		#for (( j=0; j<=10; j++ ));do
+			#sleep 2s
+			#paplay "${HOME}/Music/sounds/ubports/notifications/Mallet.ogg"
+		#done
+		exit
+		tput cnorm
+	else
+		echo ""
+		echo ""
+		echo "Enter numeric value !"
+	fi
+done
+		
+
+
+				
+	
+	
+
