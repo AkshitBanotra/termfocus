@@ -33,7 +33,3 @@ Clone the repository and run the setup script:
 git clone https://github.com/yourusername/termfocus.git
 cd termfocus
 ./setup.sh # Setup script coming soon -- Currently manual setup required.
-
-## License
-
-MIT License
